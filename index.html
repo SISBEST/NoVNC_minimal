@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>UpStream Box Remote Access</title>
+
+    <meta charset="utf-8">
+
+    <style>
+
+        body {
+            margin: 0;
+            background-color: #000000;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        #screen {
+            flex: 1;
+            overflow: hidden;
+        }
+
+    </style>
+
+    <script type="module" crossorigin="anonymous">
+        import RFB from './core/rfb.js';
+
+        let rfb;
+        let url;
+
+        if (window.location.protocol === "https:") {
+            url = 'wss';
+        } else {
+            url = 'ws';
+        }
+        url += '://' + window.location.hostname;
+        if(window.location.port) {
+            url += ':' + window.location.port;
+        }
+        url += '/' + 'websockify';
+
+        rfb = new RFB(document.getElementById('screen'), url, { credentials: { password: null } });
+        rfb.addEventListener("credentialsrequired", () => {
+            const password = prompt("Password Required:");
+            rfb.sendCredentials({ password: (password || null) });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="screen">
+    </div>
+</body>
+</html>
